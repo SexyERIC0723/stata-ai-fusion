@@ -1,0 +1,1 @@
+"""Run Stata commands tool."""

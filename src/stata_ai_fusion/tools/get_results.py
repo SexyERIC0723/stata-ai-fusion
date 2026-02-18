@@ -1,0 +1,1 @@
+"""Get results tool."""

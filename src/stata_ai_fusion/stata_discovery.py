@@ -1,0 +1,1 @@
+"""Auto-discover Stata installations."""
