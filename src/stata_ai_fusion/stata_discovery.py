@@ -130,25 +130,65 @@ def _version_from_path(path: Path) -> int | None:
 
 
 def _version_from_executable(path: Path) -> int | None:
-    """Run ``stata -q`` (or equivalent) and parse the banner for a version.
+    """Detect Stata version by running a quick batch command.
 
-    Returns *None* when the version cannot be determined (e.g. the binary
-    fails to start in batch mode).
+    Tries two strategies:
+    1. Run ``stata -q`` and parse the banner (e.g. ``Stata/MP 18.0 …``).
+    2. Run ``stata -b -e`` with a tiny do-file that displays ``c(version)``
+       and parse the resulting log.
+
+    Returns *None* when the version cannot be determined.
     """
+    import tempfile
+
+    # --- Strategy 1: parse the banner from ``stata -q`` --------------------
     try:
         result = subprocess.run(
             [str(path), "-q"],
             capture_output=True,
             text=True,
             timeout=15,
+            input="exit\n",
         )
-        # Stata prints e.g. "Stata/MP 18.0 for Mac (Apple Silicon)"
         output = result.stdout + result.stderr
         m = re.search(r"Stata\S*\s+(\d+)\.", output)
         if m:
             return int(m.group(1))
     except (OSError, subprocess.TimeoutExpired, subprocess.SubprocessError):
         pass
+
+    # --- Strategy 2: batch-mode do-file with ``display c(version)`` -------
+    try:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            do_file = Path(tmpdir) / "_version_check.do"
+            do_file.write_text("display c(version)\nexit, clear STATA\n")
+            result = subprocess.run(
+                [str(path), "-b", "do", str(do_file)],
+                capture_output=True,
+                text=True,
+                timeout=20,
+                cwd=tmpdir,
+            )
+            # Stata batch mode writes output to a .log file in cwd
+            log_file = Path(tmpdir) / "_version_check.log"
+            log_text = ""
+            if log_file.exists():
+                log_text = log_file.read_text()
+            else:
+                log_text = result.stdout + result.stderr
+            # Look for a bare version number on its own line (e.g. "19" or "18.5")
+            for line in log_text.splitlines():
+                stripped = line.strip()
+                m2 = re.match(r"^(\d+)(?:\.\d+)?$", stripped)
+                if m2:
+                    return int(m2.group(1))
+            # Also try the banner pattern in the log
+            m3 = re.search(r"Stata\S*\s+(\d+)\.", log_text)
+            if m3:
+                return int(m3.group(1))
+    except (OSError, subprocess.TimeoutExpired, subprocess.SubprocessError):
+        pass
+
     return None
 
 

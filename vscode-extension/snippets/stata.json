@@ -114,7 +114,7 @@
     ],
     "description": "Bar chart"
   },
-  "Do-file Header": {
+  "Doheader (Do-file Header)": {
     "prefix": "doheader",
     "body": [
       "/*==============================================================================",
