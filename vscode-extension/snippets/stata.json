@@ -1,0 +1,259 @@
+{
+  "Regress": {
+    "prefix": "reg",
+    "body": [
+      "regress ${1:depvar} ${2:indepvars}${3:, ${4:robust}}"
+    ],
+    "description": "OLS linear regression"
+  },
+  "Xtreg Fixed Effects": {
+    "prefix": "xtreg",
+    "body": [
+      "xtreg ${1:depvar} ${2:indepvars}, ${3|fe,re,be,mle|} ${4:robust}"
+    ],
+    "description": "Panel data regression (fixed/random effects)"
+  },
+  "Logit": {
+    "prefix": "logit",
+    "body": [
+      "logit ${1:depvar} ${2:indepvars}${3:, ${4:robust}}"
+    ],
+    "description": "Logistic regression"
+  },
+  "Probit": {
+    "prefix": "probit",
+    "body": [
+      "probit ${1:depvar} ${2:indepvars}${3:, ${4:robust}}"
+    ],
+    "description": "Probit regression"
+  },
+  "Merge 1:1": {
+    "prefix": "merge1",
+    "body": [
+      "merge 1:1 ${1:varlist} using ${2:filename}${3:, ${4:nogenerate}}"
+    ],
+    "description": "One-to-one merge"
+  },
+  "Merge m:1": {
+    "prefix": "mergem",
+    "body": [
+      "merge m:1 ${1:varlist} using ${2:filename}${3:, ${4:nogenerate}}"
+    ],
+    "description": "Many-to-one merge"
+  },
+  "Collapse": {
+    "prefix": "collapse",
+    "body": [
+      "collapse (${1|mean,sum,count,min,max,median,sd|}) ${2:varlist}, by(${3:groupvars})"
+    ],
+    "description": "Collapse dataset to summary statistics"
+  },
+  "Reshape Long": {
+    "prefix": "reshape",
+    "body": [
+      "reshape ${1|long,wide|} ${2:stubnames}, i(${3:id_var}) j(${4:time_var})"
+    ],
+    "description": "Reshape data between long and wide format"
+  },
+  "Foreach": {
+    "prefix": "foreach",
+    "body": [
+      "foreach ${1:var} ${2|in,of varlist,of local,of global,of numlist|} ${3:list} {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Foreach loop"
+  },
+  "Forvalues": {
+    "prefix": "forvalues",
+    "body": [
+      "forvalues ${1:i} = ${2:1}/${3:10} {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Forvalues loop (numeric range)"
+  },
+  "Preserve Restore": {
+    "prefix": "preserve",
+    "body": [
+      "preserve",
+      "\t${0}",
+      "restore"
+    ],
+    "description": "Preserve and restore data state"
+  },
+  "Eststo": {
+    "prefix": "eststo",
+    "body": [
+      "eststo ${1:name}: ${2:regress} ${3:depvar} ${4:indepvars}${5:, ${6:robust}}"
+    ],
+    "description": "Store estimation results"
+  },
+  "Esttab": {
+    "prefix": "esttab",
+    "body": [
+      "esttab ${1:*}${2: using ${3:\"${4:results}.${5|tex,csv,rtf,html}\"}}, ${6:se} ${7:star(* 0.10 ** 0.05 *** 0.01)} ${8:label} ${9:title(${10:Regression Results})} ${11:replace}"
+    ],
+    "description": "Export estimation table"
+  },
+  "Graph Twoway": {
+    "prefix": "graph_tw",
+    "body": [
+      "twoway (${1|scatter,line,connected,area,bar,spike,dropline,lfit,qfit|} ${2:yvar} ${3:xvar}${4:, ${5:opts}})${6: (${7:lfit} ${8:yvar} ${9:xvar})}, ///",
+      "\ttitle(\"${10:Title}\") xtitle(\"${11:X Label}\") ytitle(\"${12:Y Label}\") ///",
+      "\t${13:legend(order(1 \"${14:Series 1}\" 2 \"${15:Fit}\"))} ${16:scheme(${17:s2color})}"
+    ],
+    "description": "Twoway graph with options"
+  },
+  "Graph Bar": {
+    "prefix": "graph_bar",
+    "body": [
+      "graph bar (${1|mean,sum,count,median|}) ${2:varlist}, over(${3:groupvar}) ///",
+      "\ttitle(\"${4:Title}\") ${5:ytitle(\"${6:Y Label}\")} ///",
+      "\t${7:blabel(bar, format(%9.2f))} ${8:scheme(${9:s2color})}"
+    ],
+    "description": "Bar chart"
+  },
+  "Do-file Header": {
+    "prefix": "doheader",
+    "body": [
+      "/*==============================================================================",
+      "  Project:    ${1:Project Name}",
+      "  Purpose:    ${2:Description of this do-file}",
+      "  Author:     ${3:Author Name}",
+      "  Created:    ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "  Modified:   ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "==============================================================================*/",
+      "",
+      "clear all",
+      "set more off",
+      "set maxvar 32000",
+      "",
+      "* Set working directory",
+      "global root \"${4:path/to/project}\"",
+      "global data  \"\\$root/data\"",
+      "global output \"\\$root/output\"",
+      "",
+      "${0}"
+    ],
+    "description": "Standard do-file header with project setup"
+  },
+  "If Else": {
+    "prefix": "if_else",
+    "body": [
+      "if ${1:condition} {",
+      "\t${2}",
+      "}",
+      "else {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "If/else conditional block"
+  },
+  "Capture": {
+    "prefix": "capture",
+    "body": [
+      "capture ${1:noisily} {",
+      "\t${0}",
+      "}",
+      "if _rc != 0 {",
+      "\tdisplay as error \"Error: command failed with rc = \" _rc",
+      "}"
+    ],
+    "description": "Capture block with error handling"
+  },
+  "Tempfile": {
+    "prefix": "tempfile",
+    "body": [
+      "tempfile ${1:tmpfile}",
+      "save \\`${1}\\', replace",
+      "${0}",
+      "use \\`${1}\\', clear"
+    ],
+    "description": "Create and use a temporary file"
+  },
+  "Label Variable": {
+    "prefix": "label",
+    "body": [
+      "label variable ${1:varname} \"${2:Variable Label}\""
+    ],
+    "description": "Label a variable"
+  },
+  "Label Define": {
+    "prefix": "labeldef",
+    "body": [
+      "label define ${1:lblname} ${2:0} \"${3:No}\" ${4:1} \"${5:Yes}\"${6:, replace}",
+      "label values ${7:varname} ${1}"
+    ],
+    "description": "Define and apply value labels"
+  },
+  "Summarize": {
+    "prefix": "sum",
+    "body": [
+      "summarize ${1:varlist}${2:, detail}"
+    ],
+    "description": "Summarize variables"
+  },
+  "Tabulate": {
+    "prefix": "tab",
+    "body": [
+      "tabulate ${1:var1}${2: ${3:var2}}${4:, ${5|chi2,row,col,cell,exact|}}"
+    ],
+    "description": "Tabulate frequencies"
+  },
+  "Local Macro": {
+    "prefix": "local",
+    "body": [
+      "local ${1:name} ${2:value}"
+    ],
+    "description": "Define a local macro"
+  },
+  "Global Macro": {
+    "prefix": "global",
+    "body": [
+      "global ${1:name} \"${2:value}\""
+    ],
+    "description": "Define a global macro"
+  },
+  "IVregress 2SLS": {
+    "prefix": "ivreg",
+    "body": [
+      "ivregress 2sls ${1:depvar} ${2:exog_vars} (${3:endog_var} = ${4:instruments})${5:, ${6:robust}}"
+    ],
+    "description": "Instrumental variables regression (2SLS)"
+  },
+  "Margins": {
+    "prefix": "margins",
+    "body": [
+      "margins${1: ${2:varname}}, ${3|dydx(*),atmeans,at(${4:var}=(${5:values}))|} ${6:post}"
+    ],
+    "description": "Marginal effects after estimation"
+  },
+  "Cluster Standard Errors": {
+    "prefix": "cluster",
+    "body": [
+      "${1:regress} ${2:depvar} ${3:indepvars}, vce(cluster ${4:clustervar})"
+    ],
+    "description": "Regression with clustered standard errors"
+  },
+  "Diff-in-Diff": {
+    "prefix": "did",
+    "body": [
+      "regress ${1:depvar} ${2:treat}##${3:post} ${4:controls}, ${5:robust}"
+    ],
+    "description": "Difference-in-differences estimation"
+  },
+  "Program Define": {
+    "prefix": "program",
+    "body": [
+      "capture program drop ${1:progname}",
+      "program define ${1}, ${2|rclass,eclass|}",
+      "\tversion ${3:17}",
+      "\tsyntax ${4:varlist} [if] [in]${5: [, ${6:options}]}",
+      "\tmarksample touse",
+      "\t${0}",
+      "end"
+    ],
+    "description": "Define a Stata program/ado"
+  }
+}

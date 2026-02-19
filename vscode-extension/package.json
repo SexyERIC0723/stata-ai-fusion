@@ -1,0 +1,67 @@
+{
+  "name": "stata-ai-fusion",
+  "displayName": "Stata AI Fusion",
+  "description": "Run Stata code, view graphs, and get AI assistance — all in VS Code",
+  "version": "0.1.0",
+  "publisher": "stata-ai-fusion",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Programming Languages", "Data Science", "Machine Learning"],
+  "keywords": ["stata", "statistics", "econometrics", "mcp", "ai"],
+  "activationEvents": [
+    "onLanguage:stata",
+    "workspaceContains:**/*.do",
+    "workspaceContains:**/*.ado"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [{
+      "id": "stata",
+      "aliases": ["Stata", "stata"],
+      "extensions": [".do", ".ado", ".mata", ".doh"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "stata",
+      "scopeName": "source.stata",
+      "path": "./syntaxes/stata.tmLanguage.json"
+    }],
+    "commands": [
+      { "command": "stata-fusion.runSelection", "title": "Stata: Run Selection/Current Line", "icon": "$(play)" },
+      { "command": "stata-fusion.runFile", "title": "Stata: Run Current File", "icon": "$(run-all)" },
+      { "command": "stata-fusion.stopExecution", "title": "Stata: Stop Execution", "icon": "$(debug-stop)" }
+    ],
+    "keybindings": [
+      { "command": "stata-fusion.runSelection", "key": "ctrl+shift+enter", "mac": "cmd+shift+enter", "when": "editorTextFocus && editorLangId == stata" },
+      { "command": "stata-fusion.runFile", "key": "ctrl+shift+d", "mac": "cmd+shift+d", "when": "editorTextFocus && editorLangId == stata" }
+    ],
+    "menus": {
+      "editor/title/run": [
+        { "command": "stata-fusion.runSelection", "when": "editorLangId == stata", "group": "navigation@1" },
+        { "command": "stata-fusion.runFile", "when": "editorLangId == stata", "group": "navigation@2" }
+      ]
+    },
+    "configuration": {
+      "title": "Stata AI Fusion",
+      "properties": {
+        "stataFusion.stataPath": { "type": "string", "default": "", "description": "Path to Stata executable. Leave empty for auto-discovery." },
+        "stataFusion.requestTimeout": { "type": "number", "default": 120000, "description": "Timeout for Stata commands in milliseconds." },
+        "stataFusion.autoConfigureMcp": { "type": "boolean", "default": true, "description": "Automatically register MCP server for AI agents." },
+        "stataFusion.graphFormat": { "type": "string", "enum": ["png", "pdf", "svg"], "default": "png", "description": "Default graph export format." }
+      }
+    },
+    "snippets": [{ "language": "stata", "path": "./snippets/stata.json" }]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+    "watch": "npm run build -- --watch",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^2.22.0"
+  }
+}
