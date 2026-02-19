@@ -7,6 +7,10 @@
   "engines": { "vscode": "^1.85.0" },
   "categories": ["Programming Languages", "Data Science", "Machine Learning"],
   "keywords": ["stata", "statistics", "econometrics", "mcp", "ai"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SexyERIC0723/stata-ai-fusion"
+  },
   "activationEvents": [
     "onLanguage:stata",
     "workspaceContains:**/*.do",
