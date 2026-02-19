@@ -6,6 +6,12 @@ A three-in-one Stata AI integration: let AI directly execute Stata code,
 generate high-quality statistical analysis code, and provide a complete IDE
 experience in VS Code.
 
+## Architecture
+
+![Stata AI Fusion Architecture](assets/stata-ai-fusion-architecture.png)
+
+![Stata AI Fusion Flow](assets/stata-ai-fusion-flow.gif)
+
 ## Features
 
 - **MCP Server**: 10 tools that let AI agents operate Stata directly
